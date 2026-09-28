@@ -1,0 +1,2 @@
+import AdminTablePage from "@/components/admin/AdminTablePage";
+export default function Page(){return <AdminTablePage title="Casos" eyebrow="Soporte" description="Casos administrativos, disputas, validaciones y seguimiento." rpc="yt_admin_cases_json" columns={[{key:'id',label:'Caso'},{key:'status',label:'Estado',type:'status'},{key:'title',label:'Título'},{key:'created_at',label:'Creado',type:'date'}]}/>}

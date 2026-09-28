@@ -1,0 +1,7 @@
+ADDED README-OPTIONAL-KITS-ACCOUNTING.md
+MODIFIED next-env.d.ts
+MODIFIED package.json
+MODIFIED src/app/dashboard/finanzas/page.tsx
+MODIFIED src/components/admin/AdminTablePage.tsx
+ADDED src/lib/materials-accounting.ts
+ADDED tests/materials-accounting.test.ts
