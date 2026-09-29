@@ -1543,8 +1543,8 @@
 }
 .ui2-notification-wrap { position: relative; display: inline-flex; }
 .wissa-ui2-shell .ui2-notification-button > span:not(.sr-only) {
-  top: -6px !important;
-  right: -6px !important;
+  top: 4px !important;
+  right: 4px !important;
   min-width: 19px !important;
   width: auto !important;
   height: 19px !important;

@@ -16,8 +16,8 @@ test('V68.4 UI2-E aplica capa visual al AdminTablePage sin cambiar RPCs', () => 
 test('V68.4 UI2-E separa filtros de Servicios por estado y categoría', () => {
   const page = read('src/app/dashboard/servicios/page.tsx');
   assert.match(page, /statusOptions=\{\["all", "active", "inactive"\]\}/);
-  assert.match(page, /facetFilters=.*category/s);
-  assert.match(page, /excludedFacetValues=.*Plomería/s);
+  assert.match(page, /facetFilters=[\s\S]*category/);
+  assert.match(page, /excludedFacetValues=[\s\S]*Plomería/);
 });
 
 test('V68.4 UI2-E oculta Plomería del selector visual de precios sin borrar soporte interno', () => {

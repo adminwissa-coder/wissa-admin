@@ -1,0 +1,131 @@
+WISSA — MASTER PROMPT PARA CONTINUAR OFRECER / PROFESIONAL
+
+Contexto
+- App Mobile: Expo React Native + Expo Router, SDK 54.
+- UI Mobile: React Native nativo + Reanimated/Moti + HeroUI Native/patrones BNA UI como referencia. NO usar Tamagui.
+- Admin Web: Next.js con Rare UI/shadcn cuando corresponda.
+- Un solo lenguaje visual: Wissa Rare Native.
+- Mantener ES/EN, dark/light reales, safe areas Android/iOS, accesibilidad y responsive.
+- No usar npm audit fix --force. No agregar type=module para silenciar MODULE_TYPELESS_PACKAGE_JSON.
+
+Estado del proyecto
+- Cliente Mobile se considera cerrado funcionalmente hasta V75.4.2.
+- Detalle de reserva cliente: Resumen / Seguimiento / Acciones.
+- Acompañamiento: actividades configurables, preferencia Mujer/Hombre/Sin preferencia, sexo obligatorio en registro/perfil para matching, candidato visible antes de pagar y validación posterior.
+- Categorías Admin: Limpieza, Limpieza exterior, Plomería y Acompañamiento; pueden activarse/desactivarse. Una categoría inactiva no debe aparecer en Home cliente ni en Crear servicio del Profesional.
+- Banners estándar 1200x600 (2:1), auto-rotación.
+- Pagos/propinas/PDF y snapshots financieros existentes NO se deben reescribir durante el rediseño profesional.
+
+Problema actual Ofrecer / Profesional
+Las pantallas se sienten obsoletas, largas y desordenadas. Existen inconsistencias de navegación (Panel/Contratos/Cobros vs Inicio/Solicitudes/Finanzas). Hay pantallas de carga de página completa, por ejemplo “Cargando ubicación...”, que rompen la experiencia tipo Instagram. Finanzas tiene demasiados filtros visibles. Disponibilidad muestra calendario + horario semanal completo en una sola pantalla y se vuelve interminable.
+
+Objetivo
+Rediseñar Ofrecer/Profesional para que sea simple, rápido, compacto y visualmente idéntico al nuevo Cliente. Preservar negocio y backend; cambiar primero presentación, navegación, caché y composición de UI.
+
+Navegación principal final
+1. Inicio
+2. Solicitudes
+3. Finanzas
+4. Chat
+5. Perfil
+No agregar Servicios ni Disponibilidad como tabs raíz. Deben vivir como accesos secundarios desde Inicio/Perfil. La barra inferior debe ser única y consistente en todas las pantallas profesionales.
+
+P1 — Shell + Inicio + Perfil + Performance
+- Unificar labels/rutas del tab bar profesional.
+- Eliminar Panel/Contratos/Cobros legacy.
+- Inicio compacto:
+  * saludo + estado de disponibilidad con toggle
+  * 3 métricas máximo: ingresos disponibles/periodo, completados, calificación
+  * próxima reserva o solicitud relevante
+  * accesos rápidos: Disponibilidad, Mis servicios, Cobros, Notificaciones
+  * no duplicar ingresos grandes en varias tarjetas
+- Perfil profesional:
+  * hero compacto con foto, nombre, verificado, rating, servicios completados
+  * botón Ver mi perfil público
+  * grupos: Cuenta, Trabajo, Preferencias, Seguridad y ayuda
+  * sexo visible/editable donde corresponde y persistido para matching de Acompañamiento
+- Performance estilo Instagram:
+  * usar appCache / prefetch / stale-while-revalidate existentes
+  * mostrar cache/estado retenido inmediatamente
+  * revalidar Supabase en background
+  * nunca vaciar una pantalla que ya tiene datos por un refetch
+  * no usar full-screen “Cargando detalles...”, “Cargando ubicación...”, “Cargando finanzas...” al cambiar tabs
+  * si no hay cache inicial, usar skeleton/placeholder inline dentro del layout real, no pantalla en blanco
+  * precargar ubicación, reservas y finanzas después de bootstrap/login cuando la app está activa
+  * debounce de realtime y no refrescar en background
+
+Disponibilidad
+Rediseñar como submódulo compacto con WissaSegmentedControl:
+[ Calendario ] [ Horario ] [ Bloqueos ]
+- Calendario: mes + día seleccionado + CTA habilitar/deshabilitar.
+- Horario: semana general editable; no mostrarla debajo del calendario simultáneamente.
+- Bloqueos/excepciones: días especiales/time off.
+- Mantener 24 horas y preset 24/7 existentes.
+- No bloquear toda la pantalla esperando GPS. Si la ubicación aún revalida, mostrar la ubicación cacheada o un resumen neutral con spinner inline.
+
+Solicitudes / Reservas
+- SegmentedControl: [ Nuevas ] [ Próximas ] [ Historial ].
+- Cards compactas con servicio, fecha/hora, zona, estado y monto profesional.
+- Detalle profesional: [ Resumen ] [ Seguimiento ] [ Acciones ].
+- No exponer ranking interno de candidato ni desglose administrativo.
+- Mantener flujo En camino / Iniciar / Finalizar / código de cierre y chat existentes.
+
+Finanzas
+Simplificar drásticamente.
+- Header: saldo disponible + CTA Solicitar retiro.
+- 3 métricas máximo: Disponible, Pendiente, Propinas.
+- SegmentedControl: [ Movimientos ] [ Retiros ].
+- Mover periodo/categoría/método/estado a un botón “Filtros” que abre WissaModalSheet.
+- Mostrar chips activos arriba solo cuando un filtro esté aplicado.
+- Mantener assignment-aware finance, snapshots históricos, 100% de propinas al profesional/equipo según lógica existente.
+
+Servicios
+- Acceso desde Inicio/Perfil.
+- Crear/editar servicio solo con categorías activas desde service_categories.is_active.
+- No fallback estático que reviva categorías desactivadas.
+- Precio administrado por Wissa: profesional no modifica tarifas globales.
+- Mantener ubicación de oferta, disponibilidad y campos de categoría existentes.
+
+Componentes obligatorios / preferidos
+Reutilizar antes de crear nuevos:
+- WissaSegmentedControl
+- WissaButton
+- WissaCard
+- WissaChip
+- WissaInlineNotice
+- WissaEmptyState
+- WissaModalSheet
+- WissaListRow / WissaSettingsGroup / WissaProfileHero si existen
+- WissaAsyncBar para trabajo de background discreto
+- RareNative / Reanimated para press/motion
+No crear otra librería visual. No usar componentes web dentro de React Native.
+
+Movimiento
+- press scale sutil ~0.97–0.99
+- transición corta de tabs y cards
+- haptic discreto en acciones principales
+- respetar Reduce Motion
+- evitar animaciones decorativas largas o loaders que bloqueen
+
+Reglas críticas que NO romper
+- Supabase Auth y multirol Cliente/Ofrecer.
+- Categorías dinámicas activas/inactivas.
+- Pagos Yappy/PágueloFácil y efectivo donde aplique.
+- Propinas y conciliación ya estabilizadas.
+- PDFs/comprobantes.
+- booking_professional_assignments y finanzas assignment-aware.
+- Realtime/push/idempotencia.
+- Acompañamiento y matching por sexo/preferencia.
+- Reservas históricas y snapshots financieros no se recalculan.
+
+QA por bloque
+1. npm run typecheck
+2. npm test
+3. expo-doctor / deps:check según scripts existentes
+4. probar Android físico + iOS
+5. probar ES/EN y light/dark
+6. navegar entre tabs repetidamente: no debe aparecer pantalla vacía ni full-screen loader
+7. desactivar categoría en Admin y confirmar que desaparezca de Crear servicio profesional
+
+Forma de trabajo
+Migración gradual, no one-shot rewrite. Cada bloque debe tocar solo los archivos necesarios, preservar lógica, agregar/actualizar tests y entregar ZIP patch + changelog. Antes de modificar una pantalla, inspeccionar el código real y reutilizar componentes existentes.

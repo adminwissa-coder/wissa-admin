@@ -383,7 +383,6 @@ const defaultPlumbing: PlumbingPricing = {
 const categoryTabs: { key: PricingTab; title: string; subtitle: string; categoryName: string }[] = [
   { key: "cleaning", title: "Limpieza", subtitle: "Interior", categoryName: "Limpieza" },
   { key: "exterior", title: "Limpieza exterior", subtitle: "Exterior", categoryName: "Limpieza de exteriores" },
-  { key: "plumbing", title: "Plomería", subtitle: "Hogar", categoryName: "Plomería" },
   { key: "accompaniment", title: "Acompañamiento", subtitle: "Por hora", categoryName: "Acompañamiento" },
 ];
 
